@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../index.css";
 import "../App.css";
 import { IoDocumentsSharp } from "react-icons/io5";
+import { RxCross2 } from "react-icons/rx";
 
 const Form = () => {
   const [formData, setFormData] = useState({
@@ -12,7 +13,7 @@ const Form = () => {
     requestType: "",
     priority: "",
     message: "",
-    file: null,
+    files: [],
   });
 
   function changeHandler(event) {
@@ -27,10 +28,13 @@ const Form = () => {
   }
 
   const handleFileChange = (e) => {
-    setFormData((prevState) => ({
-      ...prevState,
-      file: e.target.files[0],
-    }));
+    const files = Array.from(e.target.files);
+    setFormData({ ...formData, files });
+  };
+
+  const handleCancelFile = (index) => {
+    const updatedFiles = formData.files.filter((file, i) => i !== index);
+    setFormData({ ...formData, files: updatedFiles });
   };
 
   function submitHandler(event) {
@@ -200,15 +204,30 @@ const Form = () => {
           </label>
 
           <input
-            id="file"
+            id="files"
             type="file"
-            name="file"
+            name="files"
+            multiple
             accept="application/msword, application/vnd.ms-excel, application/vnd.ms-powerpoint,
   text/plain, application/pdf, image/*"
             onChange={handleFileChange}
             className="w-[800px] border-2 border-gray-950 bg-pink-500"
           />
         </div>
+
+        {formData.files.map((file, index) => (
+          <div key={index} className="flex justify-center items-center ml-52">
+            {file.name}
+            <span
+              style={{ cursor: "pointer" }}
+              onClick={() => handleCancelFile(index)}
+              className="text-red-800"
+            >
+              <RxCross2 />
+            </span>
+          </div>
+        ))}
+
         <div className="flex justify-center items-center">
           <button
             type="submit"
